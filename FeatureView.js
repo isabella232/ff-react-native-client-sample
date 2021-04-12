@@ -1,8 +1,17 @@
-import { useFocusEffect } from '@react-navigation/native'
-import React, {useState} from 'react';
-import {StyleSheet, View, Text, Image} from 'react-native';
+import {useFocusEffect} from '@react-navigation/native';
+import React, {useEffect, useState} from 'react';
+import {Button} from 'react-native';
+import {
+  StyleSheet,
+  View,
+  Text,
+  Image,
+  FlatList,
+  BackHandler,
+} from 'react-native';
 import {SafeAreaView} from 'react-native';
 import cfClientInstance from 'ff-react-native-client-sdk';
+import {ScrollView} from 'react-native-gesture-handler';
 
 const styles = StyleSheet.create({
   titleLightTheme: {
@@ -79,9 +88,9 @@ const styles = StyleSheet.create({
     shadowColor: 'white',
   },
   container: {
+    width: '100%',
     flexWrap: 'wrap',
     flex: 1,
-    flexDirection: 'row',
     backgroundColor: 'red',
   },
   main: {
@@ -96,10 +105,10 @@ const styles = StyleSheet.create({
     color: 'lightsteelblue',
   },
   box: {
+    marginRight: '5%',
     marginLeft: '5%',
     width: '40%',
     marginTop: 20,
-    marginRight: '5%',
     borderRadius: 8,
     height: 220,
     elevation: 10,
@@ -113,7 +122,7 @@ const styles = StyleSheet.create({
     top: 0,
   },
 
-  needHelpBox: { 
+  needHelpBox: {
     position: 'absolute',
     backgroundColor: 'green',
     borderRadius: 15,
@@ -129,7 +138,6 @@ const styles = StyleSheet.create({
 });
 
 const FeatureView = ({route, navigation}) => {
-
   const {evaluations, name} = route.params;
   var evaluationData = evaluations;
   var isDarkTheme = evaluationData.darkTheme;
@@ -140,152 +148,197 @@ const FeatureView = ({route, navigation}) => {
   var boxTheme = isDarkTheme ? styles.boxDarkTheme : styles.boxLightTheme;
   var labelTheme = isDarkTheme ? styles.labelDarkTheme : styles.labelLighTheme;
 
-  
   useFocusEffect(
     React.useCallback(() => {
-      console.log('Registering events listener')
+      console.log('Registering events listener');
       cfClientInstance.registerEventsListener(detectFlagFrom);
       return () => {
-        console.log('Unregistering events listener')
+        console.log('Unregistering events listener');
         cfClientInstance.unregisterListener(detectFlagFrom);
-      }
-    }, []));
+      };
+    }, []),
+  );
 
   const [evaluationState, setEvaluationState] = useState(evaluationData);
 
   function detectFlagFrom(type, flags) {
-    if(type == 'evaluation_change' || type == 'evaluation_polling') {
-    var array = [];
-    if (Array.isArray(flags)) {
-      array = flags;
-    } else {
-      array.push(flags);
-    }
+    if (type == 'evaluation_change' || type == 'evaluation_polling') {
+      var array = [];
+      if (Array.isArray(flags)) {
+        array = flags;
+      } else {
+        array.push(flags);
+      }
 
-    array.forEach((x) => {
+      array.forEach((x) => {
         switch (x.flag) {
-          case 'harnessappdemoenablecvmodule': enableCVModule(x.value); break;
-          case 'harnessappdemoenablecimodule': enableCIModule(x.value); break;
-          case 'harnessappdemoenablecfmodule': enableCFModule(x.value); break;
-          case 'harnessappdemoenablecemodule': enableCEModule(x.value); break;
-          case 'harnessappdemocfribbon': enableCFRibbon(x.value); break;
-          case 'harnessappdemodarkmode': enableDarkMode(x.value); break;
-          case 'harnessappdemoenableglobalhelp': enableGlobalHelp(x.value); break;
-          case 'harnessappdemocvtriallimit': setCVTrial(x.value); break;
-          case 'harnessappdemocitriallimit': setCITrial(x.value); break;
-          case 'harnessappdemocftriallimit': setCFTrial(x.value); break;
-          case 'harnessappdemocetriallimit': setCETrial(x.value); break;
+          case 'harnessappdemoenablecvmodule':
+            enableCVModule(x.value);
+            break;
+          case 'harnessappdemoenablecimodule':
+            enableCIModule(x.value);
+            break;
+          case 'harnessappdemoenablecfmodule':
+            enableCFModule(x.value);
+            break;
+          case 'harnessappdemoenablecemodule':
+            enableCEModule(x.value);
+            break;
+          case 'harnessappdemocfribbon':
+            enableCFRibbon(x.value);
+            break;
+          case 'harnessappdemodarkmode':
+            enableDarkMode(x.value);
+            break;
+          case 'harnessappdemoenableglobalhelp':
+            enableGlobalHelp(x.value);
+            break;
+          case 'harnessappdemocvtriallimit':
+            setCVTrial(x.value);
+            break;
+          case 'harnessappdemocitriallimit':
+            setCITrial(x.value);
+            break;
+          case 'harnessappdemocftriallimit':
+            setCFTrial(x.value);
+            break;
+          case 'harnessappdemocetriallimit':
+            setCETrial(x.value);
+            break;
         }
-        copy()
-      })
+        copy();
+      });
     }
   }
 
   React.useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (
-        <Text 
+        <Text
           onPress={() => {
-            cfClientInstance.destroy(); 
+            cfClientInstance.destroy();
             navigation.popToTop();
           }}
-          style={{ color:"#fff", fontSize:18, marginRight:10}}>Destroy</Text>
+          style={{color: '#fff', fontSize: 18, marginRight: 10}}>
+          Destroy
+        </Text>
       ),
       title: name.title,
     });
   });
 
   function enableModule(moduleId, value) {
-    module = evaluationState.evaluationData.find(element => element.id == moduleId)
+    module = evaluationState.evaluationData.find(
+      (element) => element.id == moduleId,
+    );
     if (module != undefined) {
-      module.enabled = value
+      module.enabled = value;
     }
   }
-  
+
   function enableModuleTrial(moduleId, trialValue) {
-    module = evaluationState.evaluationData.find(element => element.id == moduleId)
+    module = evaluationState.evaluationData.find(
+      (element) => element.id == moduleId,
+    );
     if (module != undefined) {
-      module.trialLimit = trialValue
+      module.trialLimit = trialValue;
     }
   }
   function newToggle(moduleId, value) {
-    module = evaluationState.evaluationData.find(element => element.id == moduleId)
+    module = evaluationState.evaluationData.find(
+      (element) => element.id == moduleId,
+    );
     if (module != undefined) {
-      module.isNew = value
+      module.isNew = value;
     }
   }
 
-
   function copy() {
-    state = {}
-    state.darkTheme = evaluationState.darkTheme
-    state.evaluationData = evaluationState.evaluationData
-    setEvaluationState(state)
+    state = {};
+    state.darkTheme = evaluationState.darkTheme;
+    state.evaluationData = evaluationState.evaluationData;
+    setEvaluationState(state);
   }
 
   function enableCVModule(val) {
-    enableModule('cv', val)
+    enableModule('cv', val);
   }
 
   function enableCIModule(val) {
-    enableModule('ci', val)
+    enableModule('ci', val);
   }
 
   function enableCFModule(val) {
-    enableModule('cf', val)
+    enableModule('cf', val);
   }
 
   function enableCEModule(val) {
-    enableModule('ce', val)
+    enableModule('ce', val);
   }
 
   function enableCFRibbon(val) {
-    newToggle('cf', val)
+    newToggle('cf', val);
   }
 
   function enableDarkMode(val) {
-    evaluationState.darkTheme = val
+    evaluationState.darkTheme = val;
   }
 
   function enableGlobalHelp(val) {
-    enableModule('need_help', val)
+    enableModule('need_help', val);
   }
 
   function setCVTrial(val) {
-    enableModuleTrial('cv', val)
+    enableModuleTrial('cv', val);
   }
 
   function setCITrial(val) {
-    enableModuleTrial('ci', val)
+    enableModuleTrial('ci', val);
   }
 
   function setCFTrial(val) {
-    enableModuleTrial('cf', val)
+    enableModuleTrial('cf', val);
   }
 
   function setCETrial(val) {
-    enableModuleTrial('ce', val)
+    enableModuleTrial('ce', val);
   }
 
+  function imgThemeForElement(evaluation, index) { 
+    console.log(JSON.stringify(isDarkTheme));
+    return isDarkTheme === true
+      ? evaluation.darkImgSrc
+      : evaluation.lightImgSrc;
+  }
+
+  function renderFeatureView(evaluation, index) {
+    return <MyView
+        key={index}
+        title={evaluation.description}
+        bottomLeft={evaluation.trialLimit + '-Day Trial'}
+        imgSrc={imgThemeForElement(evaluation, index)}
+        theme={boxTheme}
+        labelTheme={labelTheme}
+        titleTheme={titleTheme}
+        isNew={evaluation.isNew}
+        isCD={evaluation.isCD}
+        isHelpVisible={evaluation.isHelpVisible}
+        isHelp={evaluation.isHelp}
+        id={evaluation.id}
+      />;
+  }
+  var filtered = evaluationData.evaluationData.filter(
+    (data) => data.enabled == true,
+  );
   return (
     <SafeAreaView style={[styles.main, theme]}>
-      <View style={[styles.container, theme]}>
-        {evaluationData.evaluationData
-          .filter((data) => data.enabled == true)
-          .map((evaluation, index) => (
-            <MyView
-              key={index}
-              title={evaluation.description}
-              bottomLeft={evaluation.trialLimit + '-Day Trial'}
-              imgSrc={evaluation.targetImgSrc}
-              theme={boxTheme}
-              labelTheme={labelTheme}
-              titleTheme={titleTheme}
-              isNew={evaluation.isNew}
-              isCD={evaluation.isCD}
-              isHelp={evaluation.isHelp}
-            />
-          ))}
+      <View style={[styles.container, theme]}> 
+      <FlatList
+          data={filtered}
+          renderItem={({item, index}) => renderFeatureView(item, index)}
+          numColumns={2}
+          keyExtractor={(item) => item.id}
+        />
       </View>
     </SafeAreaView>
   );
@@ -317,7 +370,7 @@ const NeedHelpView = () => {
             ],
           },
         ]}>
-        <Text style={styles.needHelpText}>Need help? 👋</Text>  
+        <Text style={styles.needHelpText}>Need help? 👋</Text>
       </View>
     </View>
   );
@@ -332,7 +385,8 @@ const MyView = ({
   titleTheme,
   isNew,
   isCD,
-  isHelp,
+  isHelpVisible,
+  id,
 }) => {
   const isCDView = () => {
     if (isCD === true) {
@@ -346,8 +400,9 @@ const MyView = ({
       );
     }
   };
-  if (isHelp === true) {
-    return NeedHelpView();
+  
+  if (id == "need_help") {
+    return isHelpVisible == true ?  NeedHelpView() : <View style={styles.box}/>;
   } else {
     return (
       <View
