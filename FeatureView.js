@@ -322,13 +322,12 @@ const FeatureView = ({route, navigation}) => {
         titleTheme={titleTheme}
         isNew={evaluation.isNew}
         isCD={evaluation.isCD}
-        isHelpVisible={evaluation.isHelpVisible}
-        isHelp={evaluation.isHelp}
+        isHelpVisible={evaluation.isHelp && evaluation.enabled}
         id={evaluation.id}
       />;
   }
   var filtered = evaluationData.evaluationData.filter(
-    (data) => data.enabled == true,
+    (data) => data.enabled == true || (data.id == 'need_help'),
   );
   return (
     <SafeAreaView style={[styles.main, theme]}>
@@ -350,13 +349,8 @@ const NeedHelpView = () => {
       style={[
         styles.box,
         {
-          elevation: 10,
-          shadowOpacity: 0.3,
-          shadowRadius: 5,
-          shadowOffset: {
-            width: 5,
-            height: 5,
-          },
+          elevation: 0,
+          shadowRadius: 0,
         },
       ]}>
       <View
@@ -402,7 +396,12 @@ const MyView = ({
   };
   
   if (id == "need_help") {
-    return isHelpVisible == true ?  NeedHelpView() : <View style={styles.box}/>;
+    return isHelpVisible == true ? NeedHelpView() : <View style={[styles.box, 
+      {
+        elevation: 0,
+        shadowRadius: 0,
+      }
+    ]}/>;
   } else {
     return (
       <View
