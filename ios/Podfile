@@ -7,12 +7,11 @@ target 'ff_react_native_client_sample' do
   config = use_native_modules!
 
   use_react_native!(:path => config["reactNativePath"])
-
+  
   target 'ff_react_native_client_sampleTests' do
     inherit! :complete
     # Pods for testing
   end
-  pod 'ff-ios-client-sdk'
 
   # Enables Flipper.
   #
@@ -21,14 +20,5 @@ target 'ff_react_native_client_sample' do
   use_flipper!({ 'Flipper-Folly' => '2.3.0' })
   post_install do |installer|
     flipper_post_install(installer)
-  end
-end
-
-target 'ff_react_native_client_sample-tvOS' do
-  # Pods for ff_react_native_client_sample-tvOS
-
-  target 'ff_react_native_client_sample-tvOSTests' do
-    inherit! :search_paths
-    # Pods for testing
   end
 end
