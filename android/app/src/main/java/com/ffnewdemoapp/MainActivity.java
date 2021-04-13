@@ -10,6 +10,6 @@ public class MainActivity extends ReactActivity {
    */
   @Override
   protected String getMainComponentName() {
-    return "ffNewDemoApp";
+    return "ff_react_native_client_sample";
   }
 }
