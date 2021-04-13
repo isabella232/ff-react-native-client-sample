@@ -385,7 +385,7 @@ const NeedHelpView = (isDarkTheme) => {
           {
             transform: [
               {rotateZ: '270deg'},
-              {translateY: 50},
+              {translateY: 40},
               {translateX: -80},
             ],
           },
