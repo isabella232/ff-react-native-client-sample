@@ -326,6 +326,7 @@ const FeatureView = ({route, navigation}) => {
         isCD={evaluation.isCD}
         isHelpVisible={evaluation.isHelp && evaluation.enabled}
         id={evaluation.id}
+        isDarkTheme={isDarkTheme}
       />;
   }
   var filtered = evaluationData.evaluationData.filter(
@@ -368,7 +369,7 @@ const FeatureView = ({route, navigation}) => {
   );
 };
 
-const NeedHelpView = () => {
+const NeedHelpView = (isDarkTheme) => {
   return (
     <View
       style={[
@@ -388,6 +389,16 @@ const NeedHelpView = () => {
               {translateX: -80},
             ],
           },
+          {
+            shadowColor: isDarkTheme ? 'white' : 'black',
+            elevation: 10,
+            shadowOpacity: 0.3,
+            shadowRadius: 10,
+            shadowOffset: {
+              width: 5,
+              height: 5,
+            },  
+          }
         ]}>
         <Text style={styles.needHelpText}>Need help? 👋</Text>
       </View>
@@ -406,6 +417,7 @@ const MyView = ({
   isCD,
   isHelpVisible,
   id,
+  isDarkTheme,
 }) => {
   const isCDView = () => {
     if (isCD === true) {
@@ -421,7 +433,7 @@ const MyView = ({
   };
   
   if (id == "need_help") {
-    return isHelpVisible == true ? NeedHelpView() : <View style={[styles.box, 
+    return isHelpVisible == true ? NeedHelpView(isDarkTheme) : <View style={[styles.box, 
       {
         elevation: 0,
         shadowRadius: 0,
