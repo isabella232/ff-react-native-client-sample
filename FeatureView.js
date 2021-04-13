@@ -129,6 +129,7 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     padding: 20,
     right: 0,
+    width:160
   },
   needHelpText: {
     fontSize: 17,
@@ -334,9 +335,10 @@ const FeatureView = ({route, navigation}) => {
   return (
     <SafeAreaView style={[styles.main, theme]}>
       <View style={[styles.container, theme]}> 
+      <View style={[styles.container, theme], {flexDirection:'column', flexWrap: 'wrap'}}> 
       <Text style={ 
         {
-        textAlign: 'left', 
+         textAlign: 'left', 
          marginLeft: 10, 
          fontWeight: 'bold',
          fontSize: 20,     
@@ -349,14 +351,17 @@ const FeatureView = ({route, navigation}) => {
           keyExtractor={(item) => item.id}
           scrollEnabled={false}
         />
+        </View>
       <Text style={ 
         {
           textAlign: 'left', 
            marginLeft: 10, 
+           marginTop:20,
            fontWeight: 'bold',
            fontSize: 20,     
           }
       }>Enable More Modules</Text>
+      
       <FlatList
           data={filtered.slice(2, 22)}
           renderItem={({item, index}) => renderFeatureView(item, index)}
