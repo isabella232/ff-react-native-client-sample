@@ -91,7 +91,6 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     justifyContent: 'space-around',
     width: '100%',
-    flexWrap: 'wrap',
     flex: 1,
     backgroundColor: 'red',
   },
