@@ -88,6 +88,8 @@ const styles = StyleSheet.create({
     shadowColor: 'white',
   },
   container: {
+    flexDirection: 'column',
+    justifyContent: 'space-around',
     width: '100%',
     flexWrap: 'wrap',
     flex: 1,
@@ -332,8 +334,31 @@ const FeatureView = ({route, navigation}) => {
   return (
     <SafeAreaView style={[styles.main, theme]}>
       <View style={[styles.container, theme]}> 
+      <Text style={ 
+        {
+        textAlign: 'left', 
+         marginLeft: 10, 
+         fontWeight: 'bold',
+         fontSize: 20,     
+        }
+        }>Enabled Modules</Text>
       <FlatList
-          data={filtered}
+          data={filtered.slice(0, 2)}
+          renderItem={({item, index}) => renderFeatureView(item, index)}
+          numColumns={2}
+          keyExtractor={(item) => item.id}
+          scrollEnabled={false}
+        />
+      <Text style={ 
+        {
+          textAlign: 'left', 
+           marginLeft: 10, 
+           fontWeight: 'bold',
+           fontSize: 20,     
+          }
+      }>Enable More Modules</Text>
+      <FlatList
+          data={filtered.slice(2, 22)}
           renderItem={({item, index}) => renderFeatureView(item, index)}
           numColumns={2}
           keyExtractor={(item) => item.id}
