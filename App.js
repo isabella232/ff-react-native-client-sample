@@ -13,7 +13,10 @@ import {
   ActivityIndicator,
 } from 'react-native';
 
-import cfClientInstance, {CfConfiguration, CfTarget} from 'ff-react-native-client-sdk';
+import cfClientInstance, {
+  CfConfiguration,
+  CfTarget,
+} from 'ff-react-native-client-sdk';
 import FeatureView from './FeatureView';
 
 const client = cfClientInstance;
@@ -23,31 +26,14 @@ const cfConfiguration = new CfConfiguration();
 cfConfiguration.streamEnabled = true;
 
 const cfTarget = new CfTarget();
-cfTarget.identifier = 'Harness'
-
+cfTarget.identifier = 'Harness';
 
 const apiKey = '5d59cb10-66cb-405b-ab54-b4d48132f383';
-
-function resolveAfter2Seconds() {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve(true);
-    }, 2000);
-  });
-}
 
 const styles = StyleSheet.create({
   MainContainer: {
     flex: 1,
     justifyContent: 'center',
-    alignItems: 'center',
-  },
-
-  ListContainer: {
-    padding: 10,
-
-    flexDirection: 'column',
-    justifyContent: 'space-between',
     alignItems: 'center',
   },
 
@@ -75,13 +61,6 @@ const styles = StyleSheet.create({
     padding: 5,
     fontWeight: 'bold',
     fontSize: 30,
-  },
-  HeaderTitleStyle: {
-    textAlign: 'center',
-    color: '#FFFF',
-    padding: 5,
-    fontWeight: '600',
-    fontSize: 20,
   },
   loading: {
     position: 'absolute',
@@ -112,7 +91,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const CustomButton = (props) => {
+const CustomButton = props => {
   return (
     <TouchableOpacity
       activeOpacity={0.5}
@@ -122,7 +101,7 @@ const CustomButton = (props) => {
     </TouchableOpacity>
   );
 };
-const Loader = (props) => {
+const Loader = props => {
   const {loading} = props;
   return (
     <Modal
@@ -148,7 +127,7 @@ var ceEvaluation = {
   description:
     'Efficiency Spot and quickly debug inefficiencies and optimize them to reduce costs.',
   isNew: false,
-  id: 'ce'
+  id: 'ce',
 };
 var cvEvaluation = {
   lightImgSrc: require('./assets/cv.png'),
@@ -157,7 +136,7 @@ var cvEvaluation = {
   description:
     'Deploy in peace, verify activities that take place in system. Identify risk early.',
   isNew: false,
-  id: 'cv'
+  id: 'cv',
 };
 var cfEvaluation = {
   lightImgSrc: require('./assets/cf.png'),
@@ -166,7 +145,7 @@ var cfEvaluation = {
   description:
     'Decouple release from deployment and rollout features safely and quickly.',
   isNew: false,
-  id: 'cf'
+  id: 'cf',
 };
 var ciEvaluation = {
   lightImgSrc: require('./assets/ci.png'),
@@ -174,7 +153,7 @@ var ciEvaluation = {
   targetImgSrc: {},
   description: 'Commit, build, and test your code at a whole new level',
   isNew: false,
-  id: 'ci'
+  id: 'ci',
 };
 
 var cdEvaluation = {
@@ -191,7 +170,7 @@ var needHelp = {
   darkImgSrc: require('./assets/cd_dark.png'),
   enabled: true,
   isHelp: true,
-  id: 'need_help'
+  id: 'need_help',
 };
 
 var evaluationDataState = {
@@ -208,45 +187,48 @@ const Home = ({navigation}) => {
 
   async function didTapAccount(title) {
     setLoading(true);
-    console.log("start js init with " + JSON.stringify(cfConfiguration))
-    
+    console.log('start js init with ' + JSON.stringify(cfConfiguration));
+
     try {
-        var newTarget = Object.assign({}, cfTarget)
-        newTarget.identifier = title
-        
-    const result = await client.initialize(apiKey, cfConfiguration, newTarget);
+      var newTarget = Object.assign({}, cfTarget);
+      newTarget.identifier = title;
 
-    if (result) {
-      setLoading(false);
-      console.log('setting auth');
+      const result = await client.initialize(
+        apiKey,
+        cfConfiguration,
+        newTarget,
+      );
 
-      setIsAuthorized(true);
-      globalAuth = true;
-      reloadData()
-        .then((data) => {
+      if (result) {
+        setLoading(false);
+        console.log('setting auth');
 
-          setEvaluationData(data);
-          if (data != undefined) {
-            console.log('start navigation');
-            navigation.navigate('FeatureView', {
-              evaluations: data,
-              name: {title},
-            });
-          }
-        })
-        .catch((e) => {
-          console.log('error ', e);
-          showAlert();
-        });
-    } } 
-    catch (error){
+        setIsAuthorized(true);
+        globalAuth = true;
+        reloadData()
+          .then(data => {
+            setEvaluationData(data);
+            if (data != undefined) {
+              console.log('start navigation');
+              navigation.navigate('FeatureView', {
+                evaluations: data,
+                name: {title},
+              });
+            }
+          })
+          .catch(e => {
+            console.log('error ', e);
+            showAlert();
+          });
+      }
+    } catch (error) {
       Alert.alert('Error', 'Network request failed check internet connection', [
         {
           text: 'OK',
           onPress: () => setLoading(false),
         },
       ]);
-      } 
+    }
   }
   function showAlert() {
     setLoading(false);
@@ -268,74 +250,71 @@ function reloadData() {
   return Promise.all([
     cdEvaluation,
     client.boolVariation('harnessappdemoenableglobalhelp', false).then(
-      (evaluate) =>
-        new Promise((resolve) => {
+      evaluate =>
+        new Promise(resolve => {
           needHelp.enabled = evaluate.value;
           resolve(needHelp);
         }),
     ),
-    client
-      .boolVariation('harnessappdemoenablecvmodule', false)
-      .then((evaluate) =>
-        client.numberVariation('harnessappdemocvtriallimit', 7).then(
-          (trialEvaluate) =>
-            new Promise((resolve) => {
-              cvEvaluation.enabled = evaluate.value;
-              cvEvaluation.trialLimit = trialEvaluate.value;
-              resolve(cvEvaluation);
-            }),
-        ),
+    client.boolVariation('harnessappdemoenablecvmodule', false).then(evaluate =>
+      client.numberVariation('harnessappdemocvtriallimit', 7).then(
+        trialEvaluate =>
+          new Promise(resolve => {
+            cvEvaluation.enabled = evaluate.value;
+            cvEvaluation.trialLimit = trialEvaluate.value;
+            resolve(cvEvaluation);
+          }),
       ),
-    client
-      .boolVariation('harnessappdemoenablecimodule', false)
-      .then((evaluate) =>
-        client.numberVariation('harnessappdemocitriallimit', 7).then(
-          (trialEvaluate) =>
-            new Promise((resolve) => {
-              ciEvaluation.enabled = evaluate.value;
-              ciEvaluation.trialLimit = trialEvaluate.value;
-              resolve(ciEvaluation);
-            }),
-        ),
+    ),
+    client.boolVariation('harnessappdemoenablecimodule', false).then(evaluate =>
+      client.numberVariation('harnessappdemocitriallimit', 7).then(
+        trialEvaluate =>
+          new Promise(resolve => {
+            ciEvaluation.enabled = evaluate.value;
+            ciEvaluation.trialLimit = trialEvaluate.value;
+            resolve(ciEvaluation);
+          }),
       ),
+    ),
     client
       .boolVariation('harnessappdemoenablecfmodule', false)
-      .then((evaluate) =>
+      .then(evaluate =>
         client.numberVariation('harnessappdemocftriallimit', 7).then(
-          (trialEvaluate) =>
-            new Promise((resolve) => {
+          trialEvaluate =>
+            new Promise(resolve => {
               cfEvaluation.trialLimit = trialEvaluate.value;
               cfEvaluation.enabled = evaluate.value;
               resolve(cfEvaluation);
             }),
         ),
-      ).then(client.boolVariation('harnessappdemocfribbon', false).then(
-        (isNew) =>
-          new Promise((resolve) => {
-            cfEvaluation.isNew = isNew.value;
-            resolve(cfEvaluation);
-          }),
-      )),
-    client
-      .boolVariation('harnessappdemoenablecemodule', false)
-      .then((evaluate) =>
-        client.numberVariation('harnessappdemocetriallimit', 7).then(
-          (trialEvaluate) =>
-            new Promise((resolve) => {
-              ceEvaluation.trialLimit = trialEvaluate.value;
-              ceEvaluation.enabled = evaluate.value;
-              resolve(ceEvaluation);
+      )
+      .then(
+        client.boolVariation('harnessappdemocfribbon', false).then(
+          isNew =>
+            new Promise(resolve => {
+              cfEvaluation.isNew = isNew.value;
+              resolve(cfEvaluation);
             }),
         ),
       ),
-  ]).then((evaluationList) =>
+    client.boolVariation('harnessappdemoenablecemodule', false).then(evaluate =>
+      client.numberVariation('harnessappdemocetriallimit', 7).then(
+        trialEvaluate =>
+          new Promise(resolve => {
+            ceEvaluation.trialLimit = trialEvaluate.value;
+            ceEvaluation.enabled = evaluate.value;
+            resolve(ceEvaluation);
+          }),
+      ),
+    ),
+  ]).then(evaluationList =>
     client.boolVariation('harnessappdemodarkmode', false).then(
-      (darkEvaluation) =>
-        new Promise((resolve) => {
+      darkEvaluation =>
+        new Promise(resolve => {
           evaluationDataState.darkTheme = darkEvaluation.value;
           evaluationDataState.evaluationData = evaluationList;
 
-          evaluationDataState.evaluationData.forEach((element) => {
+          evaluationDataState.evaluationData.forEach(element => {
             if (darkEvaluation.value == true) {
               element.targetImgSrc = element.darkImgSrc;
             } else {
@@ -379,7 +358,6 @@ const AuthView = ({isLoading, invoker}) => (
 const Stack = createStackNavigator();
 
 const MyStack = () => {
-  // return Home()
   return (
     <NavigationContainer>
       <Stack.Navigator>
