@@ -1,17 +1,8 @@
 import {useFocusEffect} from '@react-navigation/native';
-import React, {useEffect, useState} from 'react';
-import {Button} from 'react-native';
-import {
-  StyleSheet,
-  View,
-  Text,
-  Image,
-  FlatList,
-  BackHandler,
-} from 'react-native';
+import React, {useState} from 'react';
+import {StyleSheet, View, Text, Image, FlatList} from 'react-native';
 import {SafeAreaView} from 'react-native';
 import cfClientInstance from 'ff-react-native-client-sdk';
-import {ScrollView} from 'react-native-gesture-handler';
 
 const styles = StyleSheet.create({
   titleLightTheme: {
@@ -52,7 +43,6 @@ const styles = StyleSheet.create({
     padding: 5,
     marginBottom: 12,
     marginRight: 5,
-    // elevation: 10,
     shadowColor: 'black',
     fontSize: 12,
   },
@@ -80,7 +70,6 @@ const styles = StyleSheet.create({
   },
 
   boxLightTheme: {
-    // shadowColor: 'black',
     backgroundColor: 'white',
   },
   boxDarkTheme: {
@@ -88,8 +77,9 @@ const styles = StyleSheet.create({
     shadowColor: 'white',
   },
   container: {
+    flexDirection: 'column',
+    justifyContent: 'space-around',
     width: '100%',
-    flexWrap: 'wrap',
     flex: 1,
     backgroundColor: 'red',
   },
@@ -128,6 +118,7 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     padding: 20,
     right: 0,
+    width: 160,
   },
   needHelpText: {
     fontSize: 17,
@@ -170,7 +161,7 @@ const FeatureView = ({route, navigation}) => {
         array.push(flags);
       }
 
-      array.forEach((x) => {
+      array.forEach(x => {
         switch (x.flag) {
           case 'harnessappdemoenablecvmodule':
             enableCVModule(x.value);
@@ -229,7 +220,7 @@ const FeatureView = ({route, navigation}) => {
 
   function enableModule(moduleId, value) {
     module = evaluationState.evaluationData.find(
-      (element) => element.id == moduleId,
+      element => element.id == moduleId,
     );
     if (module != undefined) {
       module.enabled = value;
@@ -238,7 +229,7 @@ const FeatureView = ({route, navigation}) => {
 
   function enableModuleTrial(moduleId, trialValue) {
     module = evaluationState.evaluationData.find(
-      (element) => element.id == moduleId,
+      element => element.id == moduleId,
     );
     if (module != undefined) {
       module.trialLimit = trialValue;
@@ -246,7 +237,7 @@ const FeatureView = ({route, navigation}) => {
   }
   function newToggle(moduleId, value) {
     module = evaluationState.evaluationData.find(
-      (element) => element.id == moduleId,
+      element => element.id == moduleId,
     );
     if (module != undefined) {
       module.isNew = value;
@@ -304,7 +295,7 @@ const FeatureView = ({route, navigation}) => {
     enableModuleTrial('ce', val);
   }
 
-  function imgThemeForElement(evaluation, index) { 
+  function imgThemeForElement(evaluation, index) {
     console.log(JSON.stringify(isDarkTheme));
     return isDarkTheme === true
       ? evaluation.darkImgSrc
@@ -312,7 +303,8 @@ const FeatureView = ({route, navigation}) => {
   }
 
   function renderFeatureView(evaluation, index) {
-    return <MyView
+    return (
+      <MyView
         key={index}
         title={evaluation.description}
         bottomLeft={evaluation.trialLimit + '-Day Trial'}
@@ -324,26 +316,61 @@ const FeatureView = ({route, navigation}) => {
         isCD={evaluation.isCD}
         isHelpVisible={evaluation.isHelp && evaluation.enabled}
         id={evaluation.id}
-      />;
+        isDarkTheme={isDarkTheme}
+      />
+    );
   }
   var filtered = evaluationData.evaluationData.filter(
-    (data) => data.enabled == true || (data.id == 'need_help'),
+    data => data.enabled == true || data.id == 'need_help',
   );
   return (
     <SafeAreaView style={[styles.main, theme]}>
-      <View style={[styles.container, theme]}> 
-      <FlatList
-          data={filtered}
+      <View style={[styles.container, theme]}>
+        <View
+          style={
+            ([styles.container, theme],
+            {flexDirection: 'column', flexWrap: 'wrap'})
+          }>
+          <Text
+            style={{
+              textAlign: 'left',
+              marginLeft: 10,
+              fontWeight: 'bold',
+              fontSize: 20,
+            }}>
+            Enabled Modules
+          </Text>
+          <FlatList
+            data={filtered.slice(0, 2)}
+            renderItem={({item, index}) => renderFeatureView(item, index)}
+            numColumns={2}
+            keyExtractor={item => item.id}
+            scrollEnabled={false}
+          />
+        </View>
+        <Text
+          style={{
+            textAlign: 'left',
+            marginLeft: 10,
+            marginTop: 20,
+            fontWeight: 'bold',
+            fontSize: 20,
+          }}>
+          Enable More Modules
+        </Text>
+
+        <FlatList
+          data={filtered.slice(2, 22)}
           renderItem={({item, index}) => renderFeatureView(item, index)}
           numColumns={2}
-          keyExtractor={(item) => item.id}
+          keyExtractor={item => item.id}
         />
       </View>
     </SafeAreaView>
   );
 };
 
-const NeedHelpView = () => {
+const NeedHelpView = isDarkTheme => {
   return (
     <View
       style={[
@@ -359,9 +386,19 @@ const NeedHelpView = () => {
           {
             transform: [
               {rotateZ: '270deg'},
-              {translateY: 50},
+              {translateY: 40},
               {translateX: -80},
             ],
+          },
+          {
+            shadowColor: isDarkTheme ? 'white' : 'black',
+            elevation: 10,
+            shadowOpacity: 0.3,
+            shadowRadius: 10,
+            shadowOffset: {
+              width: 5,
+              height: 5,
+            },
           },
         ]}>
         <Text style={styles.needHelpText}>Need help? 👋</Text>
@@ -381,6 +418,7 @@ const MyView = ({
   isCD,
   isHelpVisible,
   id,
+  isDarkTheme,
 }) => {
   const isCDView = () => {
     if (isCD === true) {
@@ -394,14 +432,21 @@ const MyView = ({
       );
     }
   };
-  
-  if (id == "need_help") {
-    return isHelpVisible == true ? NeedHelpView() : <View style={[styles.box, 
-      {
-        elevation: 0,
-        shadowRadius: 0,
-      }
-    ]}/>;
+
+  if (id == 'need_help') {
+    return isHelpVisible == true ? (
+      NeedHelpView(isDarkTheme)
+    ) : (
+      <View
+        style={[
+          styles.box,
+          {
+            elevation: 0,
+            shadowRadius: 0,
+          },
+        ]}
+      />
+    );
   } else {
     return (
       <View
