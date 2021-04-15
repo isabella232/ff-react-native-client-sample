@@ -26,7 +26,6 @@ const cfConfiguration = new CfConfiguration();
 cfConfiguration.streamEnabled = true;
 
 const cfTarget = new CfTarget();
-cfTarget.identifier = 'Harness';
 
 const apiKey = '5d59cb10-66cb-405b-ab54-b4d48132f383';
 
