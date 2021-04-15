@@ -296,7 +296,6 @@ const FeatureView = ({route, navigation}) => {
   }
 
   function imgThemeForElement(evaluation, index) {
-    console.log(JSON.stringify(isDarkTheme));
     return isDarkTheme === true
       ? evaluation.darkImgSrc
       : evaluation.lightImgSrc;
