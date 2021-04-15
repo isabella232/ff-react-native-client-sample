@@ -1,4 +1,4 @@
-package com.cfdemoapp;
+package io.harness.rnsample;
 
 import com.facebook.react.ReactActivity;
 
