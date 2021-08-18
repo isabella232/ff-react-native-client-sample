@@ -16,7 +16,7 @@ import {
 import cfClientInstance, {
   CfConfiguration,
   CfTarget,
-} from 'ff-react-native-client-sdk';
+} from '@harnessio/ff-react-native-client-sdk';
 import FeatureView from './FeatureView';
 
 const client = cfClientInstance;

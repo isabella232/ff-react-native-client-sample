@@ -2,7 +2,7 @@ import {useFocusEffect} from '@react-navigation/native';
 import React, {useState} from 'react';
 import {StyleSheet, View, Text, Image, FlatList} from 'react-native';
 import {SafeAreaView} from 'react-native';
-import cfClientInstance from 'ff-react-native-client-sdk';
+import cfClientInstance from '@harnessio/ff-react-native-client-sdk';
 
 const styles = StyleSheet.create({
   titleLightTheme: {

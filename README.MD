@@ -5,13 +5,15 @@ This Demo App will demonstrate the usage and capabilities of React Native client
 ### Setup
 
 To install SDK, add a dependency to project's `package.json` file:
-```JSON
-"ff-react-native-client-sdk": "0.0.1",
+
+```
+"@harnessio/ff-react-native-client-sdk": "0.0.2",
 ```
 
 Then, you may import package to your project. The SDK is used via single instance exported from `index.d.ts` module
+
 ```Javascript
-import cfClientInstance from 'ff-react-native-client-sdk';
+import cfClientInstance from '@harnessio/ff-react-native-client-sdk';
 ```
 
 
