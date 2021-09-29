@@ -21,13 +21,19 @@ import FeatureView from './FeatureView';
 
 const client = cfClientInstance;
 
-//You need to add only those fields that you want to override. The rest of them are displayed here, only as an example of default values.
+// You need to add only those fields that you want to override. The rest of them are displayed here, only as an example of default values.
 const cfConfiguration = new CfConfiguration();
 cfConfiguration.streamEnabled = true;
+cfConfiguration.analyticsEnabled = true;
+cfConfiguration.baseURL = 'https://config.ff.harness.io/api/1.0';
+cfConfiguration.streamURL = 'https://config.ff.harness.io/api/1.0/stream';
+cfConfiguration.eventURL = 'https://events.ff.harness.io/api/1.0';
 
 const cfTarget = new CfTarget();
+cfTarget.name = 'Harness';
+cfTarget.identifier = 'Harness';
 
-const apiKey = '5d59cb10-66cb-405b-ab54-b4d48132f383';
+const apiKey = '944d0ce4-effc-42c4-a7b6-a89a26f5815a';
 
 const styles = StyleSheet.create({
   MainContainer: {
@@ -186,19 +192,23 @@ const Home = ({navigation}) => {
 
   async function didTapAccount(title) {
     setLoading(true);
+
     console.log('start js init with ' + JSON.stringify(cfConfiguration));
 
     try {
+
       var newTarget = Object.assign({}, cfTarget);
       newTarget.identifier = title;
 
       const result = await client.initialize(
+
         apiKey,
         cfConfiguration,
         newTarget,
       );
 
       if (result) {
+
         setLoading(false);
         console.log('setting auth');
 
