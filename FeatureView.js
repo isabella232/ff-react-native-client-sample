@@ -142,7 +142,7 @@ const FeatureView = ({route, navigation}) => {
   useFocusEffect(
     React.useCallback(() => {
       console.log('Registering events listener');
-      cfClientInstance.registerEventsListener(detectFlagFrom);
+      cfClientInstance.registerListener(detectFlagFrom);
       return () => {
         console.log('Unregistering events listener');
         cfClientInstance.unregisterListener(detectFlagFrom);
@@ -153,7 +153,11 @@ const FeatureView = ({route, navigation}) => {
   const [evaluationState, setEvaluationState] = useState(evaluationData);
 
   function detectFlagFrom(type, flags) {
+
+    console.log('detectFlagFrom: ' + JSON.stringify(type) + ', ' + JSON.stringify(flags));
+
     if (type == 'evaluation_change' || type == 'evaluation_polling') {
+
       var array = [];
       if (Array.isArray(flags)) {
         array = flags;
@@ -272,6 +276,7 @@ const FeatureView = ({route, navigation}) => {
   }
 
   function enableDarkMode(val) {
+    console.log('Dark mode: ' + val);
     evaluationState.darkTheme = val;
   }
 
