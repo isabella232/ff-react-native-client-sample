@@ -33,7 +33,7 @@ const cfTarget = new CfTarget();
 cfTarget.name = 'Harness';
 cfTarget.identifier = 'Harness';
 
-const apiKey = '944d0ce4-effc-42c4-a7b6-a89a26f5815a';
+const apiKey = 'YOUR_API_KEY';
 
 const styles = StyleSheet.create({
   MainContainer: {

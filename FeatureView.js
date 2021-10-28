@@ -276,6 +276,7 @@ const FeatureView = ({route, navigation}) => {
   }
 
   function enableDarkMode(val) {
+    console.log('Dark mode: ' + val);
     evaluationState.darkTheme = val;
   }
 
