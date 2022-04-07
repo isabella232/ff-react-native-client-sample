@@ -25,15 +25,16 @@ const client = cfClientInstance;
 const cfConfiguration = new CfConfiguration();
 cfConfiguration.streamEnabled = true;
 cfConfiguration.analyticsEnabled = true;
-cfConfiguration.baseURL = 'https://config.ff.harness.io/api/1.0';
-cfConfiguration.streamURL = 'https://config.ff.harness.io/api/1.0/stream';
-cfConfiguration.eventURL = 'https://events.ff.harness.io/api/1.0';
+
+// cfConfiguration.baseURL = 'https://config.feature-flags.uat.harness.io/api/1.0';
+// cfConfiguration.eventURL = 'https://event.feature-flags.uat.harness.io/api/1.0';
+// cfConfiguration.streamURL = 'https://config.feature-flags.uat.harness.io/api/1.0/stream';
 
 const cfTarget = new CfTarget();
 cfTarget.name = 'Harness';
 cfTarget.identifier = 'Harness';
 
-const apiKey = 'YOUR_API_KEY';
+const apiKey = 'YOUR_API_KEY_GOES_HERE';
 
 const styles = StyleSheet.create({
   MainContainer: {
